@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misión Galaxia: Prismas del Valle del Mantaro</title>
+  <style>
+    :root {
+      --bg-dark: #0a0817;
+      --card-bg: rgba(22, 18, 48, 0.75);
+      --card-border: rgba(147, 51, 234, 0.4);
+      --neon-cyan: #00f3ff;
+      --neon-pink: #ff007f;
+      --neon-yellow: #ffd700;
+      --neon-green: #00ff88;
+      --primary-grad: linear-[#e65c00,#F9D423];
+      --text-light: #f0f4f8;
+      --text-muted: #a0aec0;
+      --info-blue: #1e3a8a;
+      --info-blue-border: #3b82f6;
+      --success-green: #064e3b;
+      --success-green-border: #10b981;
+      --warning-yellow: #78350f;
+      --warning-yellow-border: #f59e0b;
+      --error-red: #7f1d1d;
+      --error-red-border: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 40px;
+    }
+
+    /* Fondo de estrellas titilantes */
+    .stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      pointer-events: none;
+      background: radial-gradient(ellipse at bottom, #1b153a 0%, #090a0f 100%);
+    }
+
+    .star {
+      position: absolute;
+      background-color: #ffffff;
+      border-radius: 50%;
+      animation: twinkle var(--duration, 3s) infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* Elementos flotantes CSS */
+    .space-element {
+      position: fixed;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .rocket {
+      top: 15%;
+      left: -80px;
+      font-size: 2.5rem;
+      animation: flyRocket 25s linear infinite;
+    }
+
+    .planet {
+      bottom: 10%;
+      right: 5%;
+      font-size: 4rem;
+      animation: floatPlanet 12s ease-in-out infinite alternate;
+    }
+
+    .astronaut {
+      top: 40%;
+      right: 2%;
+      font-size: 3rem;
+      animation: floatAstronaut 15s ease-in-out infinite alternate;
+    }
+
+    @keyframes flyRocket {
+      0% { transform: translate(0, 0) rotate(25deg); }
+      100% { transform: translate(110vw, -60vh) rotate(25deg); }
+    }
+
+    @keyframes floatPlanet {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-20px) rotate(15deg); }
+    }
+
+    @keyframes floatAstronaut {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-25px) rotate(-10deg); }
+      100% { transform: translateY(10px) rotate(10deg); }
+    }
+
+    /* Desactivar animaciones si el usuario lo prefiere */
+    @media (prefers-reduced-motion: reduce) {
+      .star, .rocket, .planet, .astronaut, .floating-prisma {
+        animation: none !important;
+      }
+    }
+
+    /* Layout Principal */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 12px;
+    }
+
+    /* Cabecera */
+    header {
+      background: linear-gradient(135deg, #7e22ce, #ec4899, #f97316);
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease infinite;
+      border-radius: 20px;
+      padding: 18px 15px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+      margin-bottom: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      margin-bottom: 8px;
+    }
+
+    .badge-cneb {
+      display: inline-block;
+      background: rgba(0, 0, 0, 0.4);
+      color: #ffd700;
+      font-size: 0.72rem;
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 215, 0, 0.5);
+      letter-spacing: 0.5px;
+      max-width: 100%;
+    }
+
+    /* Panel de Marcadores */
+    .scoreboard {
+      display: flex;
+      justify-content: space-around;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 15px;
+      padding: 10px;
+      margin-bottom: 15px;
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    .score-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .score-title {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .score-val {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--neon-cyan);
+    }
+
+    /* Navegación por pestañas */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--neon-pink) transparent;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+      height: 4px;
+    }
+    .nav-tabs::-webkit-scrollbar-thumb {
+      background: var(--neon-pink);
+      border-radius: 4px;
+    }
+
+    .tab-btn {
+      background: rgba(30, 27, 75, 0.8);
+      color: var(--text-light);
+      border: 1px solid var(--card-border);
+      padding: 10px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover {
+      background: rgba(67, 56, 202, 0.8);
+      border-color: var(--neon-cyan);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #f97316, #eab308);
+      color: #000;
+      border-color: #ffffff;
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.6);
+    }
+
+    /* Tarjetas de Contenido */
+    .card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      backdrop-filter: blur(10px);
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .card.active {
+      display: block;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      color: var(--neon-cyan);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 8px;
+    }
+
+    /* Cuadros de Mensajes / Feedback */
+    .msg-box {
+      border-radius: 15px;
+      padding: 12px 15px;
+      margin: 12px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .msg-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+      font-size: 1rem;
+    }
+
+    .msg-blue {
+      background: var(--info-blue);
+      border: 1px solid var(--info-blue-border);
+      color: #dbeafe;
+    }
+    .msg-blue .msg-icon { background: #3b82f6; color: #fff; }
+
+    .msg-green {
+      background: var(--success-green);
+      border: 1px solid var(--success-green-border);
+      color: #d1fae5;
+      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .msg-green .msg-icon { background: #10b981; color: #fff; }
+
+    .msg-yellow {
+      background: var(--warning-yellow);
+      border: 1px solid var(--warning-yellow-border);
+      color: #fef3c7;
+    }
+    .msg-yellow .msg-icon { background: #f59e0b; color: #000; }
+
+    .msg-red {
+      background: var(--error-red);
+      border: 1px solid var(--error-red-border);
+      color: #fee2e2;
+      animation: vibrate 0.3s ease-in-out;
+    }
+    .msg-red .msg-icon { background: #ef4444; color: #fff; }
+
+    @keyframes pop {
+      0% { transform: scale(0.8); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes vibrate {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    /* Botones Grandes y Redondeados */
+    .btn {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.6);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-hint {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+      color: #000;
+    }
+
+    /* SVG Flotante suavemente */
+    .svg-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 15px 0;
+      background: rgba(10, 8, 23, 0.5);
+      border-radius: 15px;
+      padding: 10px;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+    }
+
+    .floating-prisma {
+      animation: floatPrisma 6s ease-in-out infinite alternate;
+      max-width: 100%;
+      height: auto;
+    }
+
+    @keyframes floatPrisma {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-10px); }
+    }
+
+    /* Estilos Interactivos Específicos */
+    .clickable-part {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      stroke-width: 2;
+    }
+
+    .clickable-part:hover {
+      filter: drop-shadow(0 0 8px var(--neon-cyan));
+      opacity: 0.8;
+    }
+
+    .clickable-part.selected {
+      stroke: var(--neon-yellow) !important;
+      stroke-width: 4 !important;
+      fill-opacity: 0.7 !important;
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    @media (min-width: 500px) {
+      .inputs-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .input-group label {
+      font-size: 0.85rem;
+      color: var(--neon-cyan);
+    }
+
+    .input-group input {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 10px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .input-group input:focus {
+      border-color: var(--neon-pink);
+      box-shadow: 0 0 8px rgba(236, 72, 153, 0.5);
+    }
+
+    /* Opciones de Selección / Clasificación */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .option-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--text-light);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+
+    .option-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--neon-cyan);
+    }
+
+    .option-btn.selected {
+      background: rgba(147, 51, 234, 0.3);
+      border-color: var(--neon-pink);
+    }
+
+    /* Clasificación Tap/Click para Celular */
+    .drag-items-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .drag-card {
+      background: rgba(30, 41, 59, 0.9);
+      border: 1.5px solid var(--neon-cyan);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .drag-card.active-tap {
+      border-color: var(--neon-yellow);
+      box-shadow: 0 0 10px var(--neon-yellow);
+      background: rgba(234, 179, 8, 0.2);
+    }
+
+    .drop-zones-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 500px) {
+      .drop-zones-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .drop-zone {
+      background: rgba(15, 23, 42, 0.8);
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 15px;
+      padding: 12px;
+      min-height: 120px;
+    }
+
+    .drop-zone h4 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      color: var(--neon-yellow);
+    }
+
+    .drop-zone-content {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Estrellitas de Animación de Acierto */
+    .stars-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+      display: none;
+    }
+
+    .star-pop {
+      position: absolute;
+      font-size: 2rem;
+      animation: popAndFade 1s forwards ease-out;
+    }
+
+    @keyframes popAndFade {
+      0% { transform: translate(0, 0) scale(0.5) rotate(0deg); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(1.5) rotate(180deg); opacity: 0; }
+    }
+
+    /* Sliders de Exploración */
+    .slider-group {
+      margin: 10px 0;
+    }
+
+    .slider-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--neon-cyan);
+      margin-bottom: 4px;
+    }
+
+    .slider-group input[type=range] {
+      width: 100%;
+      accent-color: var(--neon-pink);
+    }
+
+    .live-results {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: rgba(0,0,0,0.4);
+      padding: 10px;
+      border-radius: 12px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .live-val {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--neon-green);
+    }
+
+    /* Tabla / Resumen Final */
+    .summary-box {
+      background: rgba(0,0,0,0.5);
+      border-radius: 15px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.9rem;
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stars-container" id="starsBg"></div>
+
+  <!-- Elementos Espaciales Flotantes -->
+  <div class="space-element rocket">🚀</div>
+  <div class="space-element planet">🪐</div>
+  <div class="space-element astronaut">👨‍🚀</div>
+
+  <!-- Capa para estrellitas animadas de triunfo -->
+  <div class="stars-overlay" id="starsOverlay"></div>
+
+  <div class="container">
+    <!-- Cabecera -->
+    <header>
+      <h1>Misión Galaxia: Prismas del Valle del Mantaro</h1>
+      <span class="badge-cneb">CNEB 1.° SECUNDARIA • RESUELVE PROBLEMAS DE FORMA, MOVIMIENTO Y LOCALIZACIÓN</span>
+    </header>
+
+    <!-- Marcador de Intentos y Pistas -->
+    <div class="scoreboard">
+      <div class="score-item">
+        <span class="score-title">1.° Intento</span>
+        <span class="score-val" id="scoreFirstTry">0</span>
+      </div>
+      <div class="score-item">
+        <span class="score-title">Con Pista</span>
+        <span class="score-val" id="scoreWithHint">0</span>
+      </div>
+      <div class="score-item">
+        <span class="score-title">Reintentos</span>
+        <span class="score-val" id="scoreExtraTries">0</span>
+      </div>
+    </div>
+
+    <!-- Pestañas de Navegación -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('retoEjemplo')">🚀 Reto & Ejemplo</button>
+      <button class="tab-btn" onclick="switchTab('nivel1')">🔍 Nivel 1: Identificar</button>
+      <button class="tab-btn" onclick="switchTab('nivel2')">🧮 Nivel 2: Calcular</button>
+      <button class="tab-btn" onclick="switchTab('nivel3')">💡 Nivel 3: Situaciones</button>
+      <button class="tab-btn" onclick="switchTab('explorar')">🎛️ Explorar</button>
+      <button class="tab-btn" onclick="switchTab('retoFinal')">🏆 Reto Final</button>
+    </nav>
+
+    <!-- PESTAÑA: Reto & Ejemplo -->
+    <section id="retoEjemplo" class="card active">
+      <h2 class="card-title">📖 Reto Guiado: Caja de Truchas de Ingenio</h2>
+      
+      <div class="msg-box msg-blue">
+        <div class="msg-icon">ℹ</div>
+        <div>
+          <strong>¡Hola, Astronavideño del Valle del Mantaro!</strong><br>
+          En el centro piscícola de Ingenio se empacan truchas para enviar a Huancayo en cajas con forma de <strong>prisma recto rectangular</strong>. ¡Aprendamos a calcular su espacio y envoltorio paso a paso!
+        </div>
+      </div>
+
+      <div class="svg-container">
+        <svg class="floating-prisma" width="220" height="180" viewBox="0 0 220 180">
+          <!-- Cara posterior -->
+          <polygon points="30,40 130,40 130,120 30,120" fill="none" stroke="#6b7280" stroke-dasharray="4" />
+          <polygon points="130,40 180,10 180,90 130,120" fill="none" stroke="#6b7280" stroke-dasharray="4" />
+          <!-- Cara frontal -->
+          <polygon points="30,80 130,80 130,160 30,160" fill="rgba(147, 51, 234, 0.3)" stroke="#00f3ff" stroke-width="2" />
+          <!-- Laterales y tapas -->
+          <polygon points="130,80 180,50 180,130 130,160" fill="rgba(236, 72, 153, 0.3)" stroke="#00f3ff" stroke-width="2" />
+          <polygon points="30,80 80,50 180,50 130,80" fill="rgba(234, 179, 8, 0.3)" stroke="#00f3ff" stroke-width="2" />
+          <!-- Textos de cotas -->
+          <text x="80" y="175" fill="#ffd700" font-size="12" font-weight="bold" text-anchor="middle">Largo = 60 cm</text>
+          <text x="165" y="110" fill="#ffd700" font-size="12" font-weight="bold">Ancho = 40 cm</text>
+          <text x="10" y="125" fill="#ffd700" font-size="12" font-weight="bold">Alto = 30 cm</text>
+        </svg>
+      </div>
+
+      <!-- Pasos Guiados -->
+      <div id="stepContent">
+        <div class="msg-box msg-blue">
+          <div class="msg-icon">1</div>
+          <div>
+            <strong>Paso 1: Identifica las dimensiones.</strong><br>
+            • Largo (l) = 60 cm | Ancho (w) = 40 cm | Alto (h) = 30 cm<br>
+            • El prisma tiene <strong>2 bases iguales</strong> (rectángulos de 60 cm × 40 cm) y <strong>4 caras laterales</strong>.
+          </div>
+        </div>
+      </div>
+
+      <button class="btn" id="btnNextStep" onclick="nextExampleStep()">Ver siguiente paso ➡️</button>
+    </section>
+
+    <!-- PESTAÑA: Nivel 1 - Identificar Elementos -->
+    <section id="nivel1" class="card">
+      <h2 class="card-title">🔍 Nivel 1: Identifica los elementos en el Silo de Chupaca</h2>
+      
+      <div class="msg-box msg-blue">
+        <div class="msg-icon">👉</div>
+        <div>
+          En Chupaca se guardan forrajes en silos con forma de prisma rectangular. Toca o haz clic directamente sobre la parte del gráfico que se te pide.
+        </div>
+      </div>
+
+      <div class="msg-box msg-yellow" id="n1Instruction">
+        <div class="msg-icon">🎯</div>
+        <div id="n1PromptText">Misión: Toca una de las <strong>BASES</strong> del prisma.</div>
+      </div>
+
+      <div class="svg-container">
+        <svg class="floating-prisma" width="240" height="200" viewBox="0 0 240 200">
+          <!-- Base Superior -->
+          <polygon id="partBaseTop" class="clickable-part" points="40,60 110,20 200,20 130,60" fill="rgba(59, 130, 246, 0.5)" stroke="#3b82f6" stroke-width="2" onclick="selectPart('base')" />
+          <!-- Base Inferior -->
+          <polygon id="partBaseBottom" class="clickable-part" points="40,170 110,130 200,130 130,170" fill="rgba(59, 130, 246, 0.5)" stroke="#3b82f6" stroke-width="2" onclick="selectPart('base')" />
+          <!-- Cara Lateral Frontal -->
+          <polygon id="partFaceFront" class="clickable-part" points="40,60 130,60 130,170 40,170" fill="rgba(236, 72, 153, 0.5)" stroke="#ec4899" stroke-width="2" onclick="selectPart('cara')" />
+          <!-- Cara Lateral Derecha -->
+          <polygon id="partFaceRight" class="clickable-part" points="130,60 200,20 200,130 130,170" fill="rgba(16, 185, 129, 0.5)" stroke="#10b981" stroke-width="2" onclick="selectPart('cara')" />
+          <!-- Línea de Altura -->
+          <line id="partHeight" class="clickable-part" x1="30" y1="60" x2="30" y2="170" stroke="#ffd700" stroke-width="5" stroke-dasharray="5,5" onclick="selectPart('altura')" />
+          <text x="15" y="120" fill="#ffd700" font-size="12" font-weight="bold">h</text>
+        </svg>
+      </div>
+
+      <div id="n1Feedback"></div>
+
+      <button class="btn btn-hint" onclick="requestHint(1)">💡 Pedir pista</button>
+    </section>
+
+    <!-- PESTAÑA: Nivel 2 - Calcular -->
+    <section id="nivel2" class="card">
+      <h2 class="card-title">🧮 Nivel 2: Cajón de Papas de la Feria Dominical</h2>
+      
+      <div class="msg-box msg-blue">
+        <div class="msg-icon">ℹ</div>
+        <div>
+          Un comerciante de la Feria Dominical de Huancayo usa un cajón rectangular de madera. Sus medidas son: <strong>Largo = 80 cm</strong>, <strong>Ancho = 50 cm</strong> y <strong>Alto = 40 cm</strong>.
+        </div>
+      </div>
+
+      <div class="svg-container">
+        <svg class="floating-prisma" width="200" height="150" viewBox="0 0 200 150">
+          <polygon points="20,50 120,50 120,120 20,120" fill="rgba(245, 158, 11, 0.3)" stroke="#f59e0b" stroke-width="2"/>
+          <polygon points="120,50 170,25 170,95 120,120" fill="rgba(245, 158, 11, 0.4)" stroke="#f59e0b" stroke-width="2"/>
+          <polygon points="20,50 70,25 170,25 120,50" fill="rgba(245, 158, 11, 0.5)" stroke="#f59e0b" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label for="n2Area">Área Total (cm²):</label>
+          <input type="number" id="n2Area" placeholder="Ej: 18400">
+        </div>
+        <div class="input-group">
+          <label for="n2Vol">Volumen (cm³):</label>
+          <input type="number" id="n2Vol" placeholder="Ej: 160000">
+        </div>
+      </div>
+
+      <div id="n2Feedback"></div>
+
+      <button class="btn" onclick="checkNivel2()">Verificar respuestas 🚀</button>
+      <button class="btn btn-hint" onclick="requestHint(2)">💡 Pedir pista</button>
+    </section>
+
+    <!-- PESTAÑA: Nivel 3 - Situaciones y Decisiones -->
+    <section id="nivel3" class="card">
+      <h2 class="card-title">💡 Nivel 3: Toldo de Puesto de Feria en Jauja</h2>
+      
+      <div class="msg-box msg-blue">
+        <div class="msg-icon">⛺</div>
+        <div>
+          Un comerciante arma un toldo con forma de <strong>prisma triangular recto</strong>. La base es un triángulo de base = 3 m y altura = 2 m. El largo del toldo es 5 m.<br>
+          Quiere comprar lona exterior impermeable para cubrir todo el toldo (incluidas las dos tapas triangulares y los 3 lados rectangulares).
+        </div>
+      </div>
+
+      <div class="svg-container">
+        <svg class="floating-prisma" width="220" height="150" viewBox="0 0 220 150">
+          <!-- Frente triangular -->
+          <polygon points="30,120 110,120 70,50" fill="rgba(0, 243, 255, 0.3)" stroke="#00f3ff" stroke-width="2" />
+          <!-- Posterior triangular -->
+          <polygon points="120,90 200,90 160,20" fill="none" stroke="#6b7280" stroke-dasharray="3" />
+          <!-- Conexiones laterales -->
+          <line x1="30" y1="120" x2="120" y2="90" stroke="#00f3ff" stroke-width="2" />
+          <line x1="110" y1="120" x2="200" y2="90" stroke="#00f3ff" stroke-width="2" />
+          <line x1="70" y1="50" x2="160" y2="20" stroke="#00f3ff" stroke-width="2" />
+        </svg>
+      </div>
+
+      <p style="font-size: 0.9rem; margin-bottom: 8px;"><strong>¿Qué medida necesita calcular el comerciante para saber cuánta lona comprar?</strong></p>
+      
+      <div class="options-grid">
+        <div class="option-btn" id="optVol" onclick="selectN3Option('volumen')">
+          📦 El VOLUMEN del prisma (espacio interno que ocupa el aire dentro del toldo).
+        </div>
+        <div class="option-btn" id="optArea" onclick="selectN3Option('area')">
+          🎨 El ÁREA TOTAL del prisma (superficie externa de las carpas y lados que se cubrirán con lona).
+        </div>
+      </div>
+
+      <div id="n3Feedback"></div>
+
+      <button class="btn" onclick="checkNivel3()">Confirmar decisión 🎯</button>
+      <button class="btn btn-hint" onclick="requestHint(3)">💡 Pedir pista</button>
+    </section>
+
+    <!-- PESTAÑA: Explorar -->
+    <section id="explorar" class="card">
+      <h2 class="card-title">🎛️ Laboratorio Galáctico: Explora el Prisma</h2>
+      
+      <div class="msg-box msg-blue">
+        <div class="msg-icon">🧪</div>
+        <div>
+          Mueve los deslizadores para cambiar las dimensiones del prisma y observa cómo cambian automáticamente el área total y el volumen en tiempo real.
+        </div>
+      </div>
+
+      <div class="svg-container">
+        <svg id="expSvg" class="floating-prisma" width="220" height="160" viewBox="0 0 220 160">
+          <!-- Dibujado dinámicamente con JS -->
+        </svg>
+      </div>
+
+      <div class="slider-group">
+        <label>Largo (l): <span id="lblLargo">5 cm</span></label>
+        <input type="range" id="sldLargo" min="2" max="10" value="5" oninput="updateExplorer()">
+      </div>
+
+      <div class="slider-group">
+        <label>Ancho (w): <span id="lblAncho">4 cm</span></label>
+        <input type="range" id="sldAncho" min="2" max="10" value="4" oninput="updateExplorer()">
+      </div>
+
+      <div class="slider-group">
+        <label>Alto (h): <span id="lblAlto">3 cm</span></label>
+        <input type="range" id="sldAlto" min="2" max="10" value="3" oninput="updateExplorer()">
+      </div>
+
+      <div class="live-results">
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">ÁREA TOTAL</div>
+          <div class="live-val" id="expArea">94 cm²</div>
+        </div>
+        <div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">VOLUMEN</div>
+          <div class="live-val" id="expVol">60 cm³</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: Reto Final -->
+    <section id="retoFinal" class="card">
+      <h2 class="card-title">🏆 Reto Final: Clasificación y Decisión</h2>
+      
+      <div class="msg-box msg-blue">
+        <div class="msg-icon">📱</div>
+        <div>
+          <strong>Instrucciones:</strong> Toca una tarjeta de problema para seleccionarla y luego toca el recuadro verde de la categoría donde corresponda (¿Pide ÁREA o VOLUMEN?).
+        </div>
+      </div>
+
+      <div class="drag-items-container" id="dragContainer">
+        <div class="drag-card" id="cardP1" onclick="selectDragCard('cardP1', 'area')">
+          📄 Pintar las paredes exteriores de un silo rectangular en Chupaca.
+        </div>
+        <div class="drag-card" id="cardP2" onclick="selectDragCard('cardP2', 'volumen')">
+          💧 Saber cuántos litros de agua caben en un tanque rectangular de una chacra en Viques.
+        </div>
+        <div class="drag-card" id="cardP3" onclick="selectDragCard('cardP3', 'area')">
+          📦 Envolver con papel de regalo una caja rectangular de alcachofas de Concepción.
+        </div>
+        <div class="drag-card" id="cardP4" onclick="selectDragCard('cardP4', 'volumen')">
+          🚚 Calcular cuánta carga de granos de maíz entra dentro de un cajón.
+        </div>
+      </div>
+
+      <div class="drop-zones-container">
+        <div class="drop-zone" onclick="dropToZone('area')">
+          <h4>🎨 REQUIERE ÁREA TOTAL</h4>
+          <div class="drop-zone-content" id="zoneArea"></div>
+        </div>
+        <div class="drop-zone" onclick="dropToZone('volumen')">
+          <h4>📦 REQUIERE VOLUMEN</h4>
+          <div class="drop-zone-content" id="zoneVolumen"></div>
+        </div>
+      </div>
+
+      <div id="rfFeedback"></div>
+
+      <button class="btn" onclick="checkRetoFinal()" style="margin-top: 15px;">Finalizar Misión y Ver Resultados 🏅</button>
+      
+      <!-- Resumen de Desempeño Final -->
+      <div id="finalSummary" class="summary-box" style="display: none;">
+        <h3 style="color: var(--neon-yellow); text-align: center; margin-bottom: 10px;">📊 Reporte de Desempeño Espacial</h3>
+        <div class="summary-item">
+          <span>Aciertos al primer intento:</span>
+          <span id="sumFirstTry" style="font-weight: bold; color: var(--neon-green);">0</span>
+        </div>
+        <div class="summary-item">
+          <span>Misiones completadas con pista:</span>
+          <span id="sumWithHint" style="font-weight: bold; color: var(--neon-yellow);">0</span>
+        </div>
+        <div class="summary-item">
+          <span>Intentos adicionales requeridos:</span>
+          <span id="sumExtraTries" style="font-weight: bold; color: var(--neon-pink);">0</span>
+        </div>
+        <div id="recommendationText" class="msg-box msg-blue" style="margin-top: 12px;">
+          <!-- Mensaje personalizado sobre qué repasar -->
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // ESTADO GENERAL Y CONTADORES
+    const state = {
+      scoreFirstTry: 0,
+      scoreWithHint: 0,
+      scoreExtraTries: 0,
+      currentStepExample: 1,
+      n1CurrentTarget: 'base', // 'base', 'cara', 'altura'
+      n1Attempts: 0,
+      n1HintUsed: false,
+      n2Attempts: 0,
+      n2HintUsed: false,
+      n3SelectedOption: null,
+      n3Attempts: 0,
+      n3HintUsed: false,
+      selectedDragCardId: null,
+      selectedDragCardCategory: null,
+      rfCompleted: false
+    };
+
+    // GENERAR ESTRELLAS DE FONDO
+    function createStars() {
+      const container = document.getElementById('starsBg');
+      const count = 40;
+      for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 3 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+        container.appendChild(star);
+      }
+    }
+
+    // CAMBIO DE PESTAÑAS
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
+      
+      event.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+
+      if (tabId === 'explorar') {
+        updateExplorer();
+      }
+    }
+
+    // ANIMACIÓN DE ESTRELLITAS AL ACERTAR
+    function triggerStarsAnimation() {
+      const overlay = document.getElementById('starsOverlay');
+      overlay.innerHTML = '';
+      overlay.style.display = 'block';
+
+      for (let i = 0; i < 20; i++) {
+        const star = document.createElement('div');
+        star.className = 'star-pop';
+        star.innerHTML = '⭐';
+        star.style.left = '50%';
+        star.style.top = '50%';
+        const dx = (Math.random() - 0.5) * 300 + 'px';
+        const dy = (Math.random() - 0.5) * 300 + 'px';
+        star.style.setProperty('--dx', dx);
+        star.style.setProperty('--dy', dy);
+        overlay.appendChild(star);
+      }
+
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 1000);
+    }
+
+    // ACTUALIZAR MARCADORES VISIBLES
+    function updateScoreboard() {
+      document.getElementById('scoreFirstTry').textContent = state.scoreFirstTry;
+      document.getElementById('scoreWithHint').textContent = state.scoreWithHint;
+      document.getElementById('scoreExtraTries').textContent = state.scoreExtraTries;
+    }
+
+    // LÓGICA RETO & EJEMPLO GUIADO
+    function nextExampleStep() {
+      state.currentStepExample++;
+      const container = document.getElementById('stepContent');
+      const btn = document.getElementById('btnNextStep');
+
+      if (state.currentStepExample === 2) {
+        container.innerHTML += `
+          <div class="msg-box msg-blue">
+            <div class="msg-icon">2</div>
+            <div>
+              <strong>Paso 2: Área Total (A<sub>T</sub>).</strong><br>
+              • Área de las 2 bases = 2 × (60 cm × 40 cm) = 2 × 2400 = <strong>4800 cm²</strong>.<br>
+              • Área Lateral (4 caras) = 2 × (60 cm × 30 cm) + 2 × (40 cm × 30 cm) = 3600 + 2400 = <strong>6000 cm²</strong>.<br>
+              • <strong>Área Total</strong> = 4800 + 6000 = <strong>10800 cm²</strong>.
+            </div>
+          </div>
+        `;
+      } else if (state.currentStepExample === 3) {
+        container.innerHTML += `
+          <div class="msg-box msg-green">
+            <div class="msg-icon">3</div>
+            <div>
+              <strong>Paso 3: Volumen (V).</strong><br>
+              • Multiplicamos las tres dimensiones: Largo × Ancho × Alto<br>
+              • V = 60 cm × 40 cm × 30 cm = <strong>72000 cm³</strong>.<br>
+              <strong>¡Misión cumplida!</strong> Ya sabes diferenciar entre la superficie externa (cm²) y la capacidad de almacenamiento (cm³).
+            </div>
+          </div>
+        `;
+        btn.style.display = 'none';
+      }
+    }
+
+    // LÓGICA NIVEL 1: IDENTIFICAR
+    function selectPart(partType) {
+      const fb = document.getElementById('n1Feedback');
+      
+      if (partType === state.n1CurrentTarget) {
+        triggerStarsAnimation();
+        
+        if (state.n1Attempts === 0 && !state.n1HintUsed) {
+          state.scoreFirstTry++;
+        } else if (state.n1HintUsed) {
+          state.scoreWithHint++;
+        } else {
+          state.scoreExtraTries++;
+        }
+        updateScoreboard();
+
+        fb.innerHTML = `
+          <div class="msg-box msg-green">
+            <div class="msg-icon">✓</div>
+            <div>
+              <strong>¡Excelente trabajo astronauta!</strong> Has identificado correctamente la parte pedida. Recuerda que un prisma recto tiene 2 bases paralelas congruentes y caras laterales perpendiculares a ellas.
+            </div>
+          </div>
+        `;
+      } else {
+        state.n1Attempts++;
+        state.scoreExtraTries++;
+        updateScoreboard();
+
+        let detailMsg = "";
+        if (partType === 'base') detailMsg = "Seleccionaste una base en vez de lo pedido.";
+        if (partType === 'cara') detailMsg = "Seleccionaste una cara lateral.";
+        if (partType === 'altura') detailMsg = "Seleccionaste la línea de la altura (h).";
+
+        fb.innerHTML = `
+          <div class="msg-box msg-red">
+            <div class="msg-icon">✗</div>
+            <div>
+              <strong>¡Atención!</strong> ${detailMsg} Inténtalo de nuevo marcando el elemento correspondiente.
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // LÓGICA NIVEL 2: CALCULAR
+    function checkNivel2() {
+      const areaVal = parseInt(document.getElementById('n2Area').value);
+      const volVal = parseInt(document.getElementById('n2Vol').value);
+      const fb = document.getElementById('n2Feedback');
+
+      // Correctos:
+      // Largo = 80, Ancho = 50, Alto = 40
+      // Área Base = 80 * 50 = 4000
+      // 2 * Bases = 8000
+      // Área Lateral = 2*(80*40) + 2*(50*40) = 6400 + 4000 = 10400
+      // Área Total = 8000 + 10400 = 18400 cm²
+      // Volumen = 80 * 50 * 40 = 160000 cm³
+
+      const correctArea = 18400;
+      const correctVol = 160000;
+
+      if (areaVal === correctArea && volVal === correctVol) {
+        triggerStarsAnimation();
+        
+        if (state.n2Attempts === 0 && !state.n2HintUsed) {
+          state.scoreFirstTry++;
+        } else if (state.n2HintUsed) {
+          state.scoreWithHint++;
+        } else {
+          state.scoreExtraTries++;
+        }
+        updateScoreboard();
+
+        fb.innerHTML = `
+          <div class="msg-box msg-green">
+            <div class="msg-icon">✓</div>
+            <div>
+              <strong>¡Misión cumplida!</strong> Cálculos perfectos:<br>
+              • <strong>Área total:</strong> 2×(80×50) + 2×(80×40) + 2×(50×40) = 8000 + 6400 + 4000 = <strong>18400 cm²</strong>.<br>
+              • <strong>Volumen:</strong> 80 × 50 × 40 = <strong>160000 cm³</strong>.
+            </div>
+          </div>
+        `;
+      } else {
+        state.n2Attempts++;
+        state.scoreExtraTries++;
+        updateScoreboard();
+
+        let errorText = "";
+        if (areaVal !== correctArea && volVal === correctVol) {
+          if (areaVal === 10400) {
+            errorText = "En el área olvidaste sumar el área de las 2 bases (solo calculaste la parte lateral).";
+          } else if (areaVal === 9200) {
+            errorText = "En el área sumaste solo una base en lugar de las 2 bases iguales.";
+          } else {
+            errorText = "El valor del área total no es correcto. Revisa la suma de las 6 caras (2 bases + 4 lados).";
+          }
+        } else if (volVal !== correctVol && areaVal === correctArea) {
+          if (volVal === 4000 || volVal === 3200 || volVal === 2000) {
+            errorText = "En el volumen multiplicaste solo dos medidas en lugar de multiplicar Largo × Ancho × Alto.";
+          } else {
+            errorText = "El valor del volumen no es correcto. Multiplica las tres dimensiones.";
+          }
+        } else {
+          errorText = "Revisa ambos valores. Recuerda calcular la suma de las 6 caras para el área y el producto de las 3 medidas para el volumen.";
+        }
+
+        fb.innerHTML = `
+          <div class="msg-box msg-red">
+            <div class="msg-icon">✗</div>
+            <div>
+              <strong>Revisa tus cálculos:</strong> ${errorText} ¡Corrige e inténtalo otra vez!
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // LÓGICA NIVEL 3: DECIDIR
+    function selectN3Option(opt) {
+      state.n3SelectedOption = opt;
+      document.getElementById('optVol').classList.remove('selected');
+      document.getElementById('optArea').classList.remove('selected');
+
+      if (opt === 'volumen') document.getElementById('optVol').classList.add('selected');
+      if (opt === 'area') document.getElementById('optArea').classList.add('selected');
+    }
+
+    function checkNivel3() {
+      const fb = document.getElementById('n3Feedback');
+      if (!state.n3SelectedOption) {
+        fb.innerHTML = `
+          <div class="msg-box msg-yellow">
+            <div class="msg-icon">!</div>
+            <div>Por favor selecciona una de las dos opciones antes de confirmar.</div>
+          </div>
+        `;
+        return;
+      }
+
+      if (state.n3SelectedOption === 'area') {
+        triggerStarsAnimation();
+
+        if (state.n3Attempts === 0 && !state.n3HintUsed) {
+          state.scoreFirstTry++;
+        } else if (state.n3HintUsed) {
+          state.scoreWithHint++;
+        } else {
+          state.scoreExtraTries++;
+        }
+        updateScoreboard();
+
+        fb.innerHTML = `
+          <div class="msg-box msg-green">
+            <div class="msg-icon">✓</div>
+            <div>
+              <strong>¡Decisión acertada! ¡Misión cumplida!</strong><br>
+              Para saber cuánta lona comprar se necesita cubrir la <strong>superficie exterior</strong> del toldo, lo cual corresponde al <strong>ÁREA TOTAL (m²)</strong> y no al volumen (espacio de aire dentro).
+            </div>
+          </div>
+        `;
+      } else {
+        state.n3Attempts++;
+        state.scoreExtraTries++;
+        updateScoreboard();
+
+        fb.innerHTML = `
+          <div class="msg-box msg-red">
+            <div class="msg-icon">✗</div>
+            <div>
+              <strong>Error de concepto:</strong> Elegiste volumen, pero el volumen mide el espacio tridimensional de adentro (capacidad de aire). La lona es una tela plana que envolverá las caras por fuera, por lo que se requiere <strong>Área Total</strong>. ¡Inténtalo de nuevo!
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // PEDIR PISTAS PROGRESIVAS
+    function requestHint(level) {
+      if (level === 1) {
+        state.n1HintUsed = true;
+        document.getElementById('n1Feedback').innerHTML = `
+          <div class="msg-box msg-yellow">
+            <div class="msg-icon">💡</div>
+            <div>
+              <strong>Pista Nivel 1:</strong> Las BASES son las dos caras opuestas e iguales (tapa superior e inferior azulada). La ALTURA es la línea vertical amarilla cortada.
+            </div>
+          </div>
+        `;
+      } else if (level === 2) {
+        state.n2HintUsed = true;
+        document.getElementById('n2Feedback').innerHTML = `
+          <div class="msg-box msg-yellow">
+            <div class="msg-icon">💡</div>
+            <div>
+              <strong>Pista Nivel 2:</strong><br>
+              • Base = 80 × 50 = 4000 cm². Como son 2 bases: 8000 cm².<br>
+              • Caras laterales: 2×(80×40) + 2×(50×40) = 6400 + 4000 = 10400 cm².<br>
+              • Volumen = 80 × 50 × 40.
+            </div>
+          </div>
+        `;
+      } else if (level === 3) {
+        state.n3HintUsed = true;
+        document.getElementById('n3Feedback').innerHTML = `
+          <div class="msg-box msg-yellow">
+            <div class="msg-icon">💡</div>
+            <div>
+              <strong>Pista Nivel 3:</strong> Pregúntate: ¿La lona rellena todo el interior del toldo como si fuera agua o solo tapiza el envoltorio exterior?
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // LÓGICA DE EXPLORACIÓN DINÁMICA
+    function updateExplorer() {
+      const l = parseInt(document.getElementById('sldLargo').value);
+      const w = parseInt(document.getElementById('sldAncho').value);
+      const h = parseInt(document.getElementById('sldAlto').value);
+
+      document.getElementById('lblLargo').textContent = `${l} cm`;
+      document.getElementById('lblAncho').textContent = `${w} cm`;
+      document.getElementById('lblAlto').textContent = `${h} cm`;
+
+      // Cálculos
+      const area = 2 * (l * w + l * h + w * h);
+      const vol = l * w * h;
+
+      document.getElementById('expArea').textContent = `${area} cm²`;
+      document.getElementById('expVol').textContent = `${vol} cm³`;
+
+      // Renderizar SVG dinámico escalado
+      const scale = 12;
+      const ox = 30;
+      const oy = 110;
+
+      const dx = w * 6;
+      const dy = w * 4;
+
+      const pFront = `${ox},${oy} ${ox + l*scale},${oy} ${ox + l*scale},${oy - h*scale} ${ox},${oy - h*scale}`;
+      const pTop = `${ox},${oy - h*scale} ${ox + l*scale},${oy - h*scale} ${ox + l*scale + dx},${oy - h*scale - dy} ${ox + dx},${oy - h*scale - dy}`;
+      const pRight = `${ox + l*scale},${oy} ${ox + l*scale + dx},${oy - dy} ${ox + l*scale + dx},${oy - h*scale - dy} ${ox + l*scale},${oy - h*scale}`;
+
+      const svg = document.getElementById('expSvg');
+      svg.innerHTML = `
+        <polygon points="${pFront}" fill="rgba(0, 243, 255, 0.4)" stroke="#00f3ff" stroke-width="2" />
+        <polygon points="${pTop}" fill="rgba(236, 72, 153, 0.4)" stroke="#ec4899" stroke-width="2" />
+        <polygon points="${pRight}" fill="rgba(255, 215, 0, 0.4)" stroke="#ffd700" stroke-width="2" />
+        <text x="${ox + (l*scale)/2}" y="${oy + 18}" fill="#00f3ff" font-size="11" text-anchor="middle">l=${l}</text>
+        <text x="${ox + l*scale + dx/2 + 8}" y="${oy - dy/2 + 10}" fill="#ffd700" font-size="11">w=${w}</text>
+        <text x="${ox - 18}" y="${oy - (h*scale)/2}" fill="#ec4899" font-size="11">h=${h}</text>
+      `;
+    }
+
+    // LÓGICA RETO FINAL (TAP/CLICK DRAG SIMULADO EN MÓVIL/PC)
+    function selectDragCard(cardId, category) {
+      document.querySelectorAll('.drag-card').forEach(c => c.classList.remove('active-tap'));
+      state.selectedDragCardId = cardId;
+      state.selectedDragCardCategory = category;
+      document.getElementById(cardId).classList.add('active-tap');
+    }
+
+    function dropToZone(targetZone) {
+      if (!state.selectedDragCardId) return;
+
+      const cardEl = document.getElementById(state.selectedDragCardId);
+      cardEl.classList.remove('active-tap');
+
+      if (targetZone === 'area') {
+        document.getElementById('zoneArea').appendChild(cardEl);
+      } else {
+        document.getElementById('zoneVolumen').appendChild(cardEl);
+      }
+
+      cardEl.setAttribute('data-current-zone', targetZone);
+      state.selectedDragCardId = null;
+      state.selectedDragCardCategory = null;
+    }
+
+    function checkRetoFinal() {
+      const cardP1Zone = document.getElementById('cardP1').getAttribute('data-current-zone');
+      const cardP2Zone = document.getElementById('cardP2').getAttribute('data-current-zone');
+      const cardP3Zone = document.getElementById('cardP3').getAttribute('data-current-zone');
+      const cardP4Zone = document.getElementById('cardP4').getAttribute('data-current-zone');
+
+      const fb = document.getElementById('rfFeedback');
+
+      if (!cardP1Zone || !cardP2Zone || !cardP3Zone || !cardP4Zone) {
+        fb.innerHTML = `
+          <div class="msg-box msg-yellow">
+            <div class="msg-icon">!</div>
+            <div>Por favor clasifica las 4 tarjetas en las zonas de ÁREA o VOLUMEN antes de finalizar.</div>
+          </div>
+        `;
+        return;
+      }
+
+      if (cardP1Zone === 'area' && cardP2Zone === 'volumen' && cardP3Zone === 'area' && cardP4Zone === 'volumen') {
+        triggerStarsAnimation();
+        fb.innerHTML = `
+          <div class="msg-box msg-green">
+            <div class="msg-icon">✓</div>
+            <div>
+              <strong>¡Clasificación perfecta!</strong> Has demostrado dominar cuándo una situación del Valle del Mantaro requiere medir superficies (área cm², m²) o capacidades (volumen cm³, m³).
+            </div>
+          </div>
+        `;
+        showFinalSummary();
+      } else {
+        fb.innerHTML = `
+          <div class="msg-box msg-red">
+            <div class="msg-icon">✗</div>
+            <div>
+              <strong>Hay tarjetas desubicadas:</strong> Recuerda que pintar o envolver es <strong>Área Total</strong>, mientras que llenar agua o guardar carga es <strong>Volumen</strong>. ¡Reorganízalas e inténtalo de nuevo!
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function showFinalSummary() {
+      document.getElementById('finalSummary').style.display = 'block';
+      document.getElementById('sumFirstTry').textContent = state.scoreFirstTry;
+      document.getElementById('sumWithHint').textContent = state.scoreWithHint;
+      document.getElementById('sumExtraTries').textContent = state.scoreExtraTries;
+
+      const recText = document.getElementById('recommendationText');
+      if (state.scoreExtraTries === 0) {
+        recText.innerHTML = `
+          <div class="msg-icon" style="background:#10b981; color:#fff;">🌟</div>
+          <div><strong>¡Dominio Excelente!</strong> Tienes muy claro cómo calcular y diferenciar el área y volumen de los prismas rectos. ¡Listo para nuevos retos espaciales!</div>
+        `;
+      } else {
+        recText.innerHTML = `
+          <div class="msg-icon" style="background:#f59e0b; color:#000;">📌</div>
+          <div><strong>Recomendación de repaso:</strong> Repasa la diferencia entre sumar la superficie de las 6 caras (área total en cm²) y multiplicar las tres dimensiones (volumen en cm³). ¡El Laboratorio de Exploración te ayudará a practicar!</div>
+        `;
+      }
+    }
+
+    // Inicialización al cargar
+    window.onload = function() {
+      createStars();
+      updateExplorer();
+    };
+  </script>
+</body>
+</html>
